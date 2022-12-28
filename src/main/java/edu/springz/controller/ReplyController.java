@@ -8,11 +8,13 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -61,15 +63,17 @@ public class ReplyController {
 	}
 	
 	//댓글 수정
-	@PutMapping(value="modify", produces= { MediaType.TEXT_PLAIN_VALUE})
-	public ResponseEntity<String> modify(@RequestBody ReplyVO rvo) {
+	@RequestMapping(value="{rno}", produces= { MediaType.TEXT_PLAIN_VALUE}, 
+									method = {RequestMethod.PUT, RequestMethod.PATCH})
+	public ResponseEntity<String> modify(@RequestBody ReplyVO rvo,
+										 @PathVariable("rno") int rno) {
 		log.info("modify().......");
+		rvo.setRno(rno);
 		
-		if (replyService.modify(rvo)) {
-			return new ResponseEntity<>("success", HttpStatus.OK);
-		} else {
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		return replyService.modify(rvo)
+					? new ResponseEntity<>("success", HttpStatus.OK)
+					: new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		
 	}
 	
 	//댓글 삭제
