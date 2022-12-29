@@ -101,11 +101,38 @@ var replyService = (function () {
     }); //END getJSON
   }
 
+  //댓글 작성일시 표시
+  //- 당일 작성한 댓글을 '시:분:초' 반환
+  //- 이전 작성한 댓글을 '연/월/일' 반환
+  function display(regDate) {
+    const isSameDate = (date1, date2) => {
+      return (
+        date1.getFullYear() === date2.getFullYear() &&
+        date1.getMonth() === date2.getMonth() &&
+        date1.getDate() === date2.getDate()
+      );
+    };
+
+    let rDate = new Date(regDate);
+    let timeString = "";
+
+    if (isSameDate(rDate, new Date())) {
+      timeString =
+        rDate.getHours() + ":" + rDate.getMinutes() + ":" + rDate.getSeconds();
+    } else {
+      timeString =
+        rDate.getFullYear() + "/" + rDate.getMonth() + "/" + rDate.getDay();
+    }
+
+    return timeString;
+  }
+
   return {
     register: register,
     list: list,
     modify: modify,
     remove: remove,
     view: view,
+    display: display,
   };
 })();
