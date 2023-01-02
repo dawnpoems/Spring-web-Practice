@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import edu.springz.domain.Criteria;
+import edu.springz.domain.ReplyPageDTO;
 import edu.springz.domain.ReplyVO;
 import edu.springz.service.ReplyService;
 import lombok.AllArgsConstructor;
@@ -34,7 +35,7 @@ public class ReplyController {
 	
 	//댓글 목록 가져오기
 	@GetMapping("list/{bno}/{pageNum}")
-	public ResponseEntity<List<ReplyVO>> list(@PathVariable("bno") int bno,
+	public ResponseEntity<ReplyPageDTO> list(@PathVariable("bno") int bno,
 											@PathVariable("pageNum") int pageNum) {
 		log.info("list()..........");
 		Criteria cri = new Criteria(3, pageNum);

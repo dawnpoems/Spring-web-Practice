@@ -25,7 +25,6 @@ pageEncoding="UTF-8"%> <%@include file="../include/header.jsp" %>
             <div class="form-group">
               <label>번호</label>
               <input
-                name="bno"
                 id="bNo"
                 value="${bvo.bno }"
                 class="form-control"
@@ -128,6 +127,7 @@ ${bvo.content }</textarea
             <button id="replySubmitBtn" class="btn btn-default">등록</button>
           </div>
         </div>
+        <hr />
         <!-- 댓글 쓰기 END -->
         <ul class="chat">
           <!-- replies -->
@@ -140,7 +140,23 @@ ${bvo.content }</textarea
           </li>
           <!-- END replies -->
         </ul>
+        <div class="text-center">
+          <ul class="pagination">
+            <li class="paginate_button">
+              <a href="${pageDTO.start-1 }" class="page-link">이전으로</a>
+            </li>
 
+            <li
+              class="paginate_button ${pNum eq pageDTO.cri.pageNum ? 'active' : ''}"
+            >
+              <a href="${pNum }" class="page-link">${pNum }</a>
+            </li>
+
+            <li class="paginate_button">
+              <a href="${pageDTO.end+1 }" class="page-link">다음으로</a>
+            </li>
+          </ul>
+        </div>
         <hr />
       </div>
       <!-- /.panel-body -->
@@ -233,32 +249,101 @@ ${bvo.content }</textarea
   var bnoVal = "${bvo.bno}";
   const replyUL = $(".chat");
 
+  //댓글 목록 출력
   function makeList(pageNum) {
-    replyService.list({ bno: bnoVal, pageNum: pageNum }, function (result) {
-      if (result == null || result.length == 0) {
-        //댓글이 없는 경우
-        replyUL.html("");
-      } else {
-        //댓글이 있는 경우
-        let tag = "";
-        for (let i = 0; i < result.length; i++) {
-          tag +=
-            "<li data-rno='" +
-            result[i].rno +
-            "'> <div class='header'> <strong>" +
-            result[i].replyer +
-            "</strong> <small class='pull-right'>" +
-            replyService.display(result[i].regDate) +
-            "</small> </div> <div>" +
-            result[i].reply +
-            "</div> </li>";
+    replyService.list(
+      { bno: bnoVal, pageNum: pageNum },
+      function (totalReply, result) {
+        //댓글 추가 시 makeList(-1)이므로 마지막 페이지 계산 후 넘기기
+        if (pageNum == -1) {
+          pageNum = Math.ceil(totalReply / replyAmount);
+          makeList(pageNum);
+          return;
         }
-        replyUL.html(tag);
+        if (result == null || result.length == 0) {
+          //댓글이 없는 경우
+          replyUL.html("");
+          $(".pagination").html("");
+        } else {
+          //댓글이 있는 경우
+          let tag = "";
+          for (let i = 0; i < result.length; i++) {
+            tag +=
+              "<li data-rno='" +
+              result[i].rno +
+              "'> <div class='header'> <strong>" +
+              result[i].replyer +
+              "</strong> <small class='pull-right'>" +
+              replyService.display(result[i].regDate) +
+              "</small> </div> <div>" +
+              result[i].reply +
+              "</div> </li>";
+          }
+          replyUL.html(tag);
+
+          makePageNum(totalReply, pageNum);
+          let madePage = "";
+          if (previous) {
+            madePage +=
+              " <li class='paginate_button'> <a id='pageBtn' href='" +
+              (startNum - 1) +
+              "' class='page-link'>이전으로</a> </li>";
+          }
+
+          for (let i = startNum; i <= endNum; i++) {
+            madePage +=
+              "<li id='pageBtn' class='paginate_button " +
+              (i == pageNum ? "active" : "") +
+              " '> <a href='" +
+              i +
+              "' class='page-link'>" +
+              i +
+              "</a> </li>";
+          }
+
+          if (next) {
+            madePage +=
+              " <li id='pageBtn' class='paginate_button'> <a href='" +
+              (endNum + 1) +
+              "' class='page-link'>다음으로</a> </li>";
+          }
+          $(".pagination").html(madePage);
+        }
       }
-    });
+    );
   }
 
+  //클릭시 처리
+  $(".pagination").on("click", "li a", function (event) {
+    event.preventDefault();
+    pno = $(this).attr("href");
+    makeList(pno);
+  });
+
   makeList(1);
+
+  // 댓글 목록 페이지 번호 출력---------------
+
+  let NUM_PER_PAGE = 5.0;
+  let replyAmount = 3.0;
+  let startNum;
+  let endNum;
+  let previous = false;
+  let next = false;
+
+  function makePageNum(totalReply, pageNum) {
+    let pages = Math.ceil(totalReply / replyAmount);
+
+    endNum = Math.ceil(pageNum / NUM_PER_PAGE) * NUM_PER_PAGE;
+
+    console.log(endNum);
+
+    startNum = endNum - (NUM_PER_PAGE - 1);
+    endNum = endNum >= pages ? pages : endNum;
+
+    previous = startNum > 1;
+    next = endNum < pages;
+  }
 
   //댓글 등록
   $("#replySubmitBtn").click(function () {
@@ -272,7 +357,7 @@ ${bvo.content }</textarea
       }
     );
     handleReplyAddClick();
-    makeList(1);
+    makeList(-1); //마지막 댓글 목록으로 이동 처리
     $("#replyerInput").val("");
     $("#replyInput").val("");
   });
@@ -299,7 +384,8 @@ ${bvo.content }</textarea
       function (result) {
         modal.modal("hide");
         alert("댓글이 수정되었습니다");
-        makeList(1);
+        pageNum = $(".pagination").find(".active").text().trim();
+        makeList(pageNum);
       }
     );
   });

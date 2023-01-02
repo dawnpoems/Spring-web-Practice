@@ -40,7 +40,7 @@ var replyService = (function () {
       "/replies/list/" + param.bno + "/" + param.pageNum + ".json",
       function (result) {
         if (callback) {
-          callback(result);
+          callback(result.totalReply, result.list);
         }
       }
     ).fail(function (err) {

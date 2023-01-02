@@ -3,6 +3,7 @@ package edu.springz.service;
 import java.util.List;
 
 import edu.springz.domain.Criteria;
+import edu.springz.domain.ReplyPageDTO;
 import edu.springz.domain.ReplyVO;
 
 public interface ReplyService {
@@ -12,5 +13,7 @@ public interface ReplyService {
 		public boolean register(ReplyVO rvo); //댓글 insert
 		public ReplyVO view(int rno); //댓글 하나
 		
-		public List<ReplyVO> list(int bno, Criteria cri);//전체 게시물
+		public ReplyPageDTO list(int bno, Criteria cri);//전체 게시물
+		public int totalReply(int bno); //전체 게시물 수
+
 }

@@ -23,16 +23,16 @@ public class ReplyServiceTest {
 	private ReplyService replyService;
 
 	@Test
+	public void testList() {
+	Criteria cri = new Criteria(3, 2);
+	replyService.list(3, cri).getList().forEach(bvo -> log.info(bvo));
+	log.info("Total Reply : " + replyService.list(3, cri).getTotalReply());
+	}
+	
 	public void testRemove() {
 	log.info("Remove Result : " + replyService.remove(13));
 	testList();
 	}	
-	
-	
-	public void testList() {
-	Criteria cri = new Criteria(3, 2);
-	replyService.list(3, cri).forEach(bvo -> log.info(bvo));
-	}
 	
 	
 	public void testModify() {

@@ -30,13 +30,26 @@
   </insert>
 
   <select id="selectReplyAllPaging" resultType="edu.springz.domain.ReplyVO">
-  	<![CDATA[
-    SELECT rno, bno, reply, replyer, reg_date as regDate, update_date as updateDate 
-    FROM tbl_reply
-    WHERE bno=#{bno}
-    ORDER BY rno ASC 
+ 	<![CDATA[
+    	SELECT 	 *
+    	FROM 	 ( SELECT /*+INDEX(tbl_reply idx_tbl_reply) */
+    					  rownum rn, rno, bno, reply, replyer,
+    			 	      reg_date as regDate, update_date as updateDate 
+    			   FROM   tbl_reply
+    			   WHERE  bno = #{bno}
+    			   AND    rno > 0
+    			   AND    rownum <= #{cri.amount} * #{cri.pageNum} ) 
+    	WHERE 	 rn > #{cri.amount} * (#{cri.pageNum} - 1)
     ]]>
+
   </select>
+  
+  <!-- 전체 댓글 수 조회 totalReply -->
+    <select id="totalReply" resultType="int">
+  	SELECT COUNT(rno) FROM tbl_reply WHERE bno=#{bno}
+  </select>
+  
+  
   <select id="selectReply" resultType="edu.springz.domain.ReplyVO">
     SELECT rno, bno, reply, replyer, reg_date as regDate, update_date as updateDate 
     FROM tbl_reply WHERE rno = #{rno}

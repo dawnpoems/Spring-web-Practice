@@ -17,5 +17,6 @@ public interface ReplyMapper {
 			//파라미터를 2개 이상 받을때는 어떤 파라미터인지 구분겸 @Param어노테이션을 붙여줘야 함.
 	
 	public ReplyVO selectReply(int rno); //댓글 하나
+	public int totalReply(int bno);
 	
 }

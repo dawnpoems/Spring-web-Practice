@@ -25,6 +25,12 @@
    </trim>
 	</sql>
 
+<!-- 댓글 수 업데이트 -->
+ <update id="updateReplyCnt">
+ 	UPDATE tbl_board
+ 	SET reply_cnt = reply_cnt + #{num}
+ 	WHERE bno=#{bno}
+ </update>
 
   <update id="updateBoard">
   		UPDATE tbl_board 
@@ -53,9 +59,11 @@
 
   <select id="selectBoardAllPaging" resultType="edu.springz.domain.BoardVO">
   	<![CDATA[
-    SELECT bno, title, writer, content, regDate, updateDate 
+    SELECT bno, title, writer, content, regDate, updateDate, replyCnt 
     FROM ( SELECT 	/*+INDEX_DESC(tbl_board pk_tbl_board) */ 
-    				rownum rn, bno, title, writer, content, reg_date as regDate, update_date as updateDate 
+    				rownum rn, bno, title, writer, content, 
+    				reg_date as regDate, update_date as updateDate, 
+    				reply_cnt as replyCnt 
     		FROM	tbl_board 
     		WHERE ]]>  
 	<!-- 보관해 둔 쿼리 사용 -->

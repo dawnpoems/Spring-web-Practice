@@ -27,7 +27,9 @@ public class ReplyMapperTests {
 	
 	@Test
 	public void testSelectAllPaging() {
-	replyMapper.selectReplyAllPaging(3, new Criteria()).forEach(rvo -> log.info(rvo));
+	Criteria cri = new Criteria(3, 2);
+	replyMapper.selectReplyAllPaging(3, cri).forEach(rvo -> log.info(rvo));
+	log.info("total count : " + replyMapper.totalReply(3));
    }
 	
 	public void testDelete() {

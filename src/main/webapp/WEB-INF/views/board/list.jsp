@@ -41,7 +41,12 @@ pageEncoding="UTF-8"%> <%@include file="../include/header.jsp" %>
             <c:forEach var="bvo" items="${list}">
               <tr class="odd gradeX">
                 <td>${bvo.bno }</td>
-                <td><a class="move" href="${bvo.bno }">${bvo.title }</a></td>
+                <td><a class="move" href="${bvo.bno }">${bvo.title }
+                  <!-- 댓글 수 표시 -->
+                <c:if test="${bvo.replyCnt > 0}">
+                  [${bvo.replyCnt}]
+                </c:if>
+                </a></td>
                 <td>${bvo.writer }</td>
                 <td>
                   <fmt:formatDate

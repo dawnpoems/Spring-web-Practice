@@ -46,5 +46,6 @@ public class BoardServiceImpl implements BoardService {
 	public int totalCount(Criteria cri) {
 		return boardMapper.totalCount(cri);
 	}
+
 	
 }

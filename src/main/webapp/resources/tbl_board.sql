@@ -1,3 +1,15 @@
+CREATE TABLE tbl_sample1(col1 VARCHAR2(100));
+CREATE TABLE tbl_sample2(col1 VARCHAR2(10));
+
+UPDATE tbl_board
+SET reply_cnt = (SELECT COUNT(rno)
+                FROM tbl_reply
+                WHERE tbl_reply.bno = tbl_board.bno);
+
+ALTER TABLE tbl_board ADD reply_cnt NUMBER DEFAULT 0;
+
+CREATE INDEX idx_tbl_reply ON tbl_reply(bno DESC, rno ASC);
+
 CREATE TABLE tbl_reply(
      rno         NUMBER  CONSTRAINT pk_tbl_reply PRIMARY KEY,
      bno         NUMBER  CONSTRAINT fk_tbl_reply
