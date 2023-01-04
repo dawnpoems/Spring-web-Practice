@@ -2,6 +2,7 @@ package edu.springz.service;
 
 import java.util.List;
 
+import edu.springz.domain.BoardAttachVO;
 import edu.springz.domain.BoardVO;
 import edu.springz.domain.Criteria;
 
@@ -16,4 +17,5 @@ public interface BoardService {
 
 		public BoardVO view(int bno); //게시물 하나
 		
+		public List<BoardAttachVO> attachList(int bno);
 }

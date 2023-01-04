@@ -54,6 +54,11 @@ public class BoardServiceImpl implements BoardService {
 	}
 
 	@Override
+	public List<BoardAttachVO> attachList(int bno) {
+		return boardAttachMapper.selectAttachAll(bno);
+	}
+	
+	@Override
 	public List<BoardVO> list(Criteria cri) {
 		return boardMapper.selectBoardAllPaging(cri);
 	}
@@ -63,4 +68,6 @@ public class BoardServiceImpl implements BoardService {
 		return boardMapper.totalCount(cri);
 	}
 
+
+	
 }

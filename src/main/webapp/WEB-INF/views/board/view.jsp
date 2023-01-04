@@ -102,7 +102,17 @@ ${bvo.content }</textarea
   <div class="col-lg-12">
     <div class="panel panel-default">
       <div class="panel-heading">image</div>
-      <div class="panel-body">여기에 이미지가 뜨도록 구현해보자</div>
+      <div class="panel-body">
+        <!-- 업로드 결과출력 창 -->
+        <div class="uploadResult">
+          <ul></ul>
+        </div>
+
+        <!-- 썸네일 이미지 원본 표시 창 -->
+        <div class="originImgDiv">
+          <div class="originImg"></div>
+        </div>
+      </div>
       <!-- /.panel-body -->
     </div>
     <!-- /.panel -->
@@ -247,6 +257,70 @@ ${bvo.content }</textarea
 
 <script src="/resources/js/reply.js"></script>
 <script>
+  var bnoVal = "${bvo.bno}";
+  //파일첨부 관련
+
+  //업로드 결과 출력 함수
+  const resultUL = $(".uploadResult ul");
+  function showUploadFile(result) {
+    let tag = "";
+
+    $(result).each(function (i, obj) {
+      //서버로 전송할 데이터를 li태그 안에 넣기
+      tag +=
+        "<li data-folder='" +
+        obj.upFolder +
+        "' data-uuid='" +
+        obj.uuid +
+        "' data-filename='" +
+        obj.fileName +
+        "' data-image='" +
+        obj.image +
+        "'> ";
+
+      if (obj.image) {
+        let thumbImg = encodeURIComponent(
+          obj.upFolder + "/s_" + obj.uuid + "_" + obj.fileName
+        );
+
+        //썸네일 이미지 클릭 시 원본 이미지 표시
+        let originImg = obj.upFolder + "\\" + obj.uuid + "_" + obj.fileName;
+        originImg = originImg.replace(new RegExp(/\\/g), "/");
+
+        tag +=
+          "<img src='/display?fileName=" +
+          thumbImg +
+          "' onclick=\"showOriginal('" +
+          originImg +
+          "')\"/><br>" +
+          (i + 1) +
+          ". " +
+          obj.fileName +
+          " </li>";
+      } else {
+        let filePath = encodeURIComponent(
+          obj.upFolder + "/" + obj.uuid + "_" + obj.fileName
+        );
+        tag +=
+          "<img src='/resources/imgs/attach.png'/> </a> <br>" +
+          (i + 1) +
+          ". " +
+          obj.fileName +
+          " </li>";
+      }
+    });
+
+    resultUL.html(tag);
+  }
+
+  // json 데이터 타입으로 업로드한 파일정보 받기
+  $.getJSON("/board/attachList", { bno: bnoVal }, function (result) {
+    console.log(result);
+    showUploadFile(result);
+  });
+
+  //END 파일첨부 관련
+
   //댓글작성 열고닫기
   $("#newBtn").click(handleReplyAddClick);
 
@@ -260,7 +334,6 @@ ${bvo.content }</textarea
     }
   }
 
-  var bnoVal = "${bvo.bno}";
   const replyUL = $(".chat");
 
   //댓글 목록 출력
