@@ -1,3 +1,12 @@
+CREATE TABLE tbl_attach(
+    uuid      VARCHAR2(100) CONSTRAINT pk_tbl_attach PRIMARY KEY,
+    up_folder VARCHAR2(200) NOT NULL,
+    file_name VARCHAR2(100) NOT NULL,
+    image     CHAR(1),
+    bno       NUMBER        CONSTRAINT fk_board_attach
+                            REFERENCES tbl_board(bno)
+)
+
 CREATE TABLE tbl_sample1(col1 VARCHAR2(100));
 CREATE TABLE tbl_sample2(col1 VARCHAR2(10));
 
