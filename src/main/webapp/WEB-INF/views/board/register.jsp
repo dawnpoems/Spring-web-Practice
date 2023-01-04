@@ -178,7 +178,7 @@ pageEncoding="UTF-8"%> <%@include file="../include/header.jsp" %>
           processData: false,
           success: function (result) {
             console.log(result);
-            // $("input[name='uploadFile']").val("");
+            $("input[name='uploadFile']").val("");
             showUploadFile(result);
           },
         });
