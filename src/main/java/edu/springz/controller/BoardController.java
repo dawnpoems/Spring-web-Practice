@@ -81,10 +81,8 @@ public class BoardController {
 		boardService.register(bvo);
 		
 		List<BoardAttachVO> attachList = bvo.getAttachList();
-		log.info(attachList);
 		if (bvo.getAttachList().size() != 0 && bvo.getAttachList() != null) {
 			for (BoardAttachVO bavo : attachList) {
-				log.info(bavo);
 				bavo.setBno(bvo.getBno());
 				boardAttachMapper.insertAttach(bavo);
 			}
