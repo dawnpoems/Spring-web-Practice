@@ -97,6 +97,20 @@ ${bvo.content }</textarea
 </div>
 <!-- /.row -->
 
+<!-- image 시작 -->
+<div class="row">
+  <div class="col-lg-12">
+    <div class="panel panel-default">
+      <div class="panel-heading">image</div>
+      <div class="panel-body">여기에 이미지가 뜨도록 구현해보자</div>
+      <!-- /.panel-body -->
+    </div>
+    <!-- /.panel -->
+  </div>
+  <!-- /.col-lg-12 -->
+</div>
+<!-- /.row -->
+
 <!-- 댓글목록 시작 -->
 <div class="row">
   <div class="col-lg-12">

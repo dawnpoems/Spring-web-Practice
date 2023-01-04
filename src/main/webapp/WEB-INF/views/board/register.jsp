@@ -45,7 +45,9 @@ pageEncoding="UTF-8"%> <%@include file="../include/header.jsp" %>
                 >리셋</a
               >
               <a href="/board/list" class="btn btn-warning">취소</a>
-              <button class="btn btn-primary">제출</button>
+              <button id="submitBtn" type="submit" class="btn btn-primary">
+                제출
+              </button>
             </form>
           </div>
           <!-- /.col-lg-6 (nested) -->
@@ -96,6 +98,18 @@ pageEncoding="UTF-8"%> <%@include file="../include/header.jsp" %>
         let tag = "";
 
         $(result).each(function (i, obj) {
+          //서버로 전송할 데이터를 li태그 안에 넣기
+          tag +=
+            "<li data-folder='" +
+            obj.upFolder +
+            "' data-uuid='" +
+            obj.uuid +
+            "' data-filename='" +
+            obj.fileName +
+            "' data-image='" +
+            obj.image +
+            "'> ";
+
           if (obj.image) {
             let thumbImg = encodeURIComponent(
               obj.upFolder + "/s_" + obj.uuid + "_" + obj.fileName
@@ -106,7 +120,7 @@ pageEncoding="UTF-8"%> <%@include file="../include/header.jsp" %>
             originImg = originImg.replace(new RegExp(/\\/g), "/");
 
             tag +=
-              "<li><img src='/display?fileName=" +
+              "<img src='/display?fileName=" +
               thumbImg +
               "' onclick=\"showOriginal('" +
               originImg +
@@ -123,7 +137,7 @@ pageEncoding="UTF-8"%> <%@include file="../include/header.jsp" %>
               obj.upFolder + "/" + obj.uuid + "_" + obj.fileName
             );
             tag +=
-              "<li><a href='/download?fileName=" +
+              "<a href='/download?fileName=" +
               filePath +
               "'><img src='/resources/imgs/attach.png'/> </a> <br>" +
               (i + 1) +
@@ -203,6 +217,44 @@ pageEncoding="UTF-8"%> <%@include file="../include/header.jsp" %>
 
         $(this).parent().remove();
       });
+
+      //제출버튼 클릭 이벤트 처리
+      $("#submitBtn").click(function (e) {
+        e.preventDefault();
+        let tag = "";
+        let lis = resultUL.children("li");
+        lis.each(function (i, obj) {
+          tag +=
+            "<input type='hidden' name='attachList[" +
+            i +
+            "].fileName' " +
+            "value='" +
+            $(obj).data("filename") +
+            "'> " +
+            "<input type='hidden' name='attachList[" +
+            i +
+            "].upFolder' " +
+            "value='" +
+            $(obj).data("folder") +
+            "'> " +
+            "<input type='hidden' name='attachList[" +
+            i +
+            "].uuid' " +
+            "value='" +
+            $(obj).data("uuid") +
+            "'> " +
+            "<input type='hidden' name='attachList[" +
+            i +
+            "].image' " +
+            "value='" +
+            $(obj).data("image") +
+            "'> ";
+        });
+        console.log(tag);
+        $("form[role='form']").append(tag);
+        $("form[role='form']").submit();
+      });
+      //END 제출버튼 클릭 이벤트 처리
     </script>
   </div>
 </div>
