@@ -46,6 +46,10 @@ pageEncoding="UTF-8"%> <%@include file="../include/header.jsp" %>
               >
               <a href="/board/list" class="btn btn-warning">취소</a>
               <button class="btn btn-primary">제출</button>
+              <input type="hidden" name="uuid" />
+              <input type="hidden" name="upFolder" />
+              <input type="hidden" name="fileName" />
+              <input type="hidden" name="image" />
             </form>
           </div>
           <!-- /.col-lg-6 (nested) -->
