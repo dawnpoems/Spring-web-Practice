@@ -33,7 +33,6 @@ public class BoardController {
 	
 	//생성자 인젝션의 대상이 되는 필드 선언
 	private BoardService boardService;
-	private BoardAttachMapper boardAttachMapper;
 	
 	//게시물 삭제
 	@PostMapping("remove")
@@ -79,14 +78,6 @@ public class BoardController {
 	public String register(BoardVO bvo, RedirectAttributes rttr) {
 		log.info("register().......");
 		boardService.register(bvo);
-		
-		List<BoardAttachVO> attachList = bvo.getAttachList();
-		if (bvo.getAttachList().size() != 0 && bvo.getAttachList() != null) {
-			for (BoardAttachVO bavo : attachList) {
-				bavo.setBno(bvo.getBno());
-				boardAttachMapper.insertAttach(bavo);
-			}
-		}
 		
 		rttr.addFlashAttribute("result", bvo.getBno()); //게시물 번호를 결과로 반환
 														//리다이렉트 할 시 이런 식으로 데이터를 가지고 가도록 하면 됨.
