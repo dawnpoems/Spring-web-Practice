@@ -22,13 +22,26 @@ public class BoardServiceImpl implements BoardService {
 
 	@Override
 	public boolean modify(BoardVO bvo) {
-		return boardMapper.updateBoard(bvo) == 1 ? true : false;
+		int result = boardMapper.updateBoard(bvo);
+		boardAttachMapper.deleteAttachAll(bvo.getBno());
+		if ( bvo.getAttachList() == null ||bvo.getAttachList().size() < 1) {
+			return result == 1 ? true : false;
+		} else {
+			for (BoardAttachVO bavo : bvo.getAttachList()) {
+				bavo.setBno(bvo.getBno());
+				boardAttachMapper.insertAttach(bavo);
+			}
+			return result == 1 ? true : false;
+		}
 
 	}
 
+	@Transactional
 	@Override
 	public boolean remove(int bno) {
-		return boardMapper.deleteBoard(bno) == 1 ? true : false;
+		int result1 = boardAttachMapper.deleteAttachAll(bno);
+		int result2 = boardMapper.deleteBoard(bno);
+		return result1 == 1 && result2 == 1 ? true : false;
 	}
 
 	@Transactional

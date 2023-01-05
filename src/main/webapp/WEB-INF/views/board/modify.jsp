@@ -119,7 +119,6 @@ ${bvo.content }</textarea
         <div class="uploadDiv">
           <input type="file" name="uploadFile" multiple />
           <hr />
-
           <!-- 업로드 결과출력 창 -->
           <div class="uploadResult">
             <ul></ul>
@@ -137,8 +136,6 @@ ${bvo.content }</textarea
     <!-- /.col-lg-12 -->
   </div>
   <!-- /.row -->
-
-  <div>hihihiihiii</div>
 
   <%@include file="../include/footer.jsp" %>
 
@@ -182,8 +179,6 @@ ${bvo.content }</textarea
             "' onclick=\"showOriginal('" +
             originImg +
             "')\"/><br>" +
-            (i + 1) +
-            ". " +
             obj.fileName +
             " <span data-file='" +
             thumbImg +
@@ -195,8 +190,6 @@ ${bvo.content }</textarea
           );
           tag +=
             "<img src='/resources/imgs/attach.png'/> </a> <br>" +
-            (i + 1) +
-            ". " +
             obj.fileName +
             "<span data-file='" +
             filePath +
@@ -205,8 +198,54 @@ ${bvo.content }</textarea
         }
       });
 
-      resultUL.html(tag);
+      resultUL.append(tag);
     }
+
+    // 파일 종류(exe, sh, zip) 및 크기 (5MB) 제한 관련 함수
+    var regex = new RegExp("(.*?)\.(exe|sh|zip|alz)$");
+    var maxSize = 5242880;
+
+    function uploadCheck(fileName, fileSize) {
+      if (regex.test(fileName)) {
+        alert("해당 형식의 파일은 업로드하실 수 없습니다");
+        return false;
+      }
+
+      if (fileSize >= maxSize) {
+        alert("업로드 허용 크기 초과(5MB) - 업로드 불가");
+        return false;
+      }
+      return true;
+    }
+
+    $(".uploadDiv input").on("change", function (event) {
+      let formData = new FormData(); // form처럼 key/value로 값 생성 가능
+      let files = $("input[name='uploadFile']")[0].files;
+
+      //formDate 객체에 파일 추가
+      for (var i = 0; i < files.length; i++) {
+        if (!uploadCheck(files.name, files.size)) {
+          // continue; //제한 파일 제외
+          return; //업로드 중지
+        } else {
+          formData.append("uploadFile", files[i]);
+        }
+      }
+      // json 데이터 타입으로 업로드 파일정보 받기
+      $.ajax({
+        type: "post",
+        url: "/upload/ajaxAction",
+        data: formData,
+        dataType: "json",
+        contentType: false,
+        processData: false,
+        success: function (result) {
+          console.log(result);
+          $("input[name='uploadFile']").val("");
+          showUploadFile(result);
+        },
+      });
+    });
 
     // json 데이터 타입으로 업로드한 파일정보 받기
     $.getJSON("/board/attachList", { bno: bnoVal }, function (result) {
@@ -215,26 +254,31 @@ ${bvo.content }</textarea
     });
 
     //X버튼 클릭시 이미지 삭제
-    $(".uploadResult").on("click", "span", function () {
-      console.log($(this).data("file"));
-      console.log($(this).data("type"));
+    let removeDic = {};
 
-      $.ajax({
-        type: "post",
-        url: "/deleteFile",
-        data: { fileName: $(this).data("file"), type: $(this).data("type") },
-        dataType: "text",
-        success: function (result) {
-          alert(result);
-        },
-      });
+    $(".uploadResult").on("click", "span", function () {
+      removeDic[$(this).data("file")] = $(this).data("type");
 
       $(this).parent().remove();
+    });
+
+    //페이지를 벗어날 때마다 removeDic에 있는 이미지는 없애버리기
+    $(window).on("beforeunload", function () {
+      for (let key in removeDic) {
+        $.ajax({
+          type: "post",
+          url: "/deleteFile",
+          data: { fileName: key, type: removeDic[key] },
+          dataType: "text",
+          success: function (result) {},
+        });
+      }
     });
 
     //수정버튼 클릭시 이벤트 처리
     $("#modBtn").click(function (e) {
       e.preventDefault();
+
       let tag = "";
       let lis = resultUL.children("li");
       lis.each(function (i, obj) {
