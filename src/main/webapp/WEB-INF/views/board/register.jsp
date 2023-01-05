@@ -122,9 +122,7 @@ pageEncoding="UTF-8"%> <%@include file="../include/header.jsp" %>
             tag +=
               "<img src='/display?fileName=" +
               thumbImg +
-              "' onclick=\"showOriginal('" +
-              originImg +
-              "')\"/><br>" +
+              "'/><br>" +
               (i + 1) +
               ". " +
               obj.fileName +
@@ -137,9 +135,7 @@ pageEncoding="UTF-8"%> <%@include file="../include/header.jsp" %>
               obj.upFolder + "/" + obj.uuid + "_" + obj.fileName
             );
             tag +=
-              "<a href='/download?fileName=" +
-              filePath +
-              "'><img src='/resources/imgs/attach.png'/> </a> <br>" +
+              "<img src='/resources/imgs/attach.png'/><br>" +
               (i + 1) +
               ". " +
               obj.fileName +

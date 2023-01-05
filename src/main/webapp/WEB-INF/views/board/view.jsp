@@ -319,6 +319,22 @@ ${bvo.content }</textarea
     showUploadFile(result);
   });
 
+  //누르면 크게 보는 함수
+  const originImgDiv = $(".originImgDiv");
+  const originImg = $(".originImg");
+
+  function showOriginal(originImg) {
+    let imgBox = "<img src='/display?fileName=" + originImg + "'/> ";
+    // originImgDiv.css("display", "flex");
+    originImgDiv.fadeIn();
+    $(".originImg").html(imgBox);
+  }
+
+  originImgDiv.on("click", "div img", function () {
+    // originImgDiv.css("display", "none");
+    originImgDiv.fadeOut();
+  });
+
   //END 파일첨부 관련
 
   //댓글작성 열고닫기
