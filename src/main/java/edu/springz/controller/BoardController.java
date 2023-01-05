@@ -1,5 +1,9 @@
 package edu.springz.controller;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +42,33 @@ public class BoardController {
 	//생성자 인젝션의 대상이 되는 필드 선언
 	private BoardService boardService;
 	
+	
+	//첨부파일 삭제(게시물 삭제용)
+	public void deleteAttach(List<BoardAttachVO> attachList) {
+		log.info("deleteAttach......" + attachList);
+		
+		if(attachList == null || attachList.size() < 1) {
+			return;
+		}
+		
+		attachList.forEach(abvo -> {
+			Path file = Paths.get("c:\\upload\\" + abvo.getUpFolder() + "\\" + abvo.getUuid() + "_" + abvo.getFileName());
+			try {
+				Files.deleteIfExists(file); // 파일이 존재하면 삭제
+				
+				if(Files.probeContentType(file).startsWith("image")) {
+					Path thumbnail = Paths.get("c:\\upload\\" + abvo.getUpFolder() + "\\s_" + abvo.getUuid() + "_" + abvo.getFileName());
+					Files.delete(thumbnail); //썸네일 삭제
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			} 
+			
+
+		});
+	}
+	
+	
 	//첨부파일 목록 가져오기
 	@GetMapping("attachList")
 	public ResponseEntity<List<BoardAttachVO>> attachList(int bno) {
@@ -50,8 +81,12 @@ public class BoardController {
 	@PostMapping("remove")
 	public String remove(int bno, RedirectAttributes rttr, Criteria cri) {
 		log.info("remove()..........");
+		
+		List<BoardAttachVO> attachList = boardService.attachList(bno);
+		log.info(attachList.size());
 		boolean result = boardService.remove(bno);
 		if (result) {
+			deleteAttach(attachList);
 			rttr.addFlashAttribute("result", "success"); //삭제에 성공하면 success 가져가기
 		}
 		rttr.addAttribute("pageNum", cri.getPageNum());

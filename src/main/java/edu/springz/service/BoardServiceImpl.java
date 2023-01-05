@@ -39,7 +39,7 @@ public class BoardServiceImpl implements BoardService {
 	@Transactional
 	@Override
 	public boolean remove(int bno) {
-		int result1 = boardAttachMapper.deleteAttachAll(bno);
+		int result1 = boardAttachMapper.deleteAttachAll(bno); //첨부파일 먼저 모두 삭제
 		int result2 = boardMapper.deleteBoard(bno);
 		return result1 == 1 && result2 == 1 ? true : false;
 	}
