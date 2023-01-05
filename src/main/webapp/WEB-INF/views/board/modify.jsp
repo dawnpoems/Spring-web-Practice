@@ -138,6 +138,8 @@ ${bvo.content }</textarea
   </div>
   <!-- /.row -->
 
+  <div>hihiihihiihihi</div>
+
   <%@include file="../include/footer.jsp" %>
 
   <script type="text/javascript">
