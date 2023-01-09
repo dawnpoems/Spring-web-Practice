@@ -23,6 +23,7 @@ import lombok.extern.log4j.Log4j;
 @RequestMapping("/sample/")
 @Log4j
 public class SampleController {
+	
 	@PostMapping("sample")
 	public SampleVO sample(@RequestBody SampleVO svo) {
 		log.info("sample : " + svo);

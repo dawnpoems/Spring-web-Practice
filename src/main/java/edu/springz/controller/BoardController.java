@@ -63,8 +63,6 @@ public class BoardController {
 			} catch (IOException e) {
 				e.printStackTrace();
 			} 
-			
-
 		});
 	}
 	

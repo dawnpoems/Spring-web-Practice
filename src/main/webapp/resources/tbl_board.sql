@@ -1,3 +1,48 @@
+CREATE TABLE tbl_member(
+    id      VARCHAR2(50)    NOT NULL    PRIMARY KEY,
+    pw      VARCHAR2(100)   NOT NULL,
+    name    VARCHAR2(50)     NOT NULL,
+    reg_date    DATE    DEFAULT SYSDATE,
+    update_date DATE,
+    enabled     CHAR(1) DEFAULT '1'
+);
+
+CREATE TABLE tbl_member_auth(
+    id      VARCHAR2(50)    NOT NULL    CONSTRAINT fk_tbl_member_auth REFERENCES tbl_member(id),
+    auth    VARCHAR2(50)    NOT NULL
+);
+
+DROP TABLE authorities;
+DROP TABLE users;
+
+CREATE TABLE users(
+    username VARCHAR2(50) NOT NULL PRIMARY KEY,
+    password VARCHAR2(50) NOT NULL,
+    enabled  CHAR(1)      DEFAULT '1'
+);
+ 
+ CREATE TABLE authorities(
+	username  VARCHAR2(50) NOT NULL 
+			  CONSTRAINT fk_authorities_users
+			  REFERENCES users(username),
+	authority VARCHAR2(50) NOT NULL
+);
+ 
+CREATE UNIQUE INDEX ix_auth_username
+ON     authorities(username, authority);
+ 
+INSERT INTO users(username, password) VALUES('user00', '1111');
+INSERT INTO users(username, password) VALUES('member00', '1111');
+INSERT INTO users(username, password) VALUES('admin00', '1111'); 
+ 
+INSERT INTO authorities VALUES('user00',   'ROLE_USER');
+INSERT INTO authorities VALUES('member00', 'ROLE_MEMBER');
+INSERT INTO authorities VALUES('admin00',  'ROLE_MEMBER');
+INSERT INTO authorities VALUES('admin00',  'ROLE_ADMIN');
+
+commit;
+
+
 CREATE TABLE tbl_attach(
     uuid      VARCHAR2(100) CONSTRAINT pk_tbl_attach PRIMARY KEY,
     up_folder VARCHAR2(200) NOT NULL,
